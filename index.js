@@ -61,6 +61,8 @@ Linkage.prototype.render = function(key){
   if (isPromise(data)) {
     data.then(function(data){
       render(data);
+    }, function(){
+      render([]);
     });
   } else {
     render(data);
@@ -77,9 +79,9 @@ Linkage.prototype.render = function(key){
     if (defaultOption) {
       select_options[0] = new Option(
           defaultOption.text || defaultOption.value,
-          defaultOption.value || defaultOption.text,
-          defaultOption.defaultSelected || true,
-          defaultOption.selected || true
+          typeof defaultOption.value !== "undefined" ? defaultOption.value : defaultOption.text,
+          typeof defaultOption.defaultSelected !== "undefined" ? defaultOption.defaultSelected : true,
+          typeof defaultOption.selected !== "undefined" ? defaultOption.selected : true
         );
       if (defaultOption.disabled !== false) {
         select_options[0].disabled = true;
