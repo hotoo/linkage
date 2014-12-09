@@ -6,6 +6,12 @@
 <select id="city" name="city"></select>
 <select id="country" name="country"></select>
 
+Set Value:
+<button type="button" id="chaoyang">北京-市辖区-朝阳区</button>
+<button type="button" id="heping">天津-市辖区-和平区</button>
+
+<hr />
+
 ````javascript
 seajs.use(['index', 'jquery', 'promise'], function(Linkage, $, Promise) {
 
@@ -70,6 +76,20 @@ seajs.use(['index', 'jquery', 'promise'], function(Linkage, $, Promise) {
   });
 
   province.render("0001");
+
+
+
+  $("#chaoyang").click(function(){
+    province.val("11");
+    city.val("1101");
+    country.val("110105");
+  });
+
+  $("#heping").click(function(){
+    province.val("12");
+    city.val("1201");
+    country.val("120101");
+  });
 
 });
 ````

@@ -6,8 +6,14 @@
 <select id="city" name="city"></select>
 <select id="country" name="country"></select>
 
+Set Value:
+<button type="button" id="chaoyang">北京-市辖区-朝阳区</button>
+<button type="button" id="xihu">浙江-杭州-西湖区</button>
+
+<hr />
+
 ````javascript
-seajs.use(['./data', 'index'], function(DATA, Linkage) {
+seajs.use(['./data', 'index', 'jquery'], function(DATA, Linkage, $) {
 
   function getData(pid){
     var a = [];
@@ -50,6 +56,20 @@ seajs.use(['./data', 'index'], function(DATA, Linkage) {
   });
 
   province.render("0001");
+
+
+
+  $("#chaoyang").click(function(){
+    province.val("11");
+    city.val("1101");
+    country.val("110105");
+  });
+
+  $("#xihu").click(function(){
+    province.val("33");
+    city.val("3301");
+    country.val("330106");
+  });
 
 });
 ````

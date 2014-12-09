@@ -41,10 +41,13 @@ function Linkage(element, options){
   me.element = $(element);
   var options = me.options = $.extend({}, DEFAULT_OPTIONS, options);
   me._evt = new Events(me);
+  me.status = "init";
 
   if (options.driver) {
     options.driver.on("change", function(key){
-      me.render(key)
+      me.render(key);
+    }).on("loading", function(){
+      me.status = "loading";
     });
   }
 
@@ -55,6 +58,8 @@ function Linkage(element, options){
 
 Linkage.prototype.render = function(key){
   var me = this;
+  me.status = "loading";
+  me._evt.emit(me.status);
   var data_option = this.options.data;
   var data = isFunction(data_option) ? data_option(key) : data_option;
 
@@ -91,6 +96,7 @@ Linkage.prototype.render = function(key){
       d = isObject(data[i]) ? data[i] : {
         text: data[i]
       };
+      // XXX: refact new Option(object)
       select_options[defaultOption ? i+1 : i] = new Option(
           d.text || d.value,
           d.value || d.text,
@@ -102,16 +108,43 @@ Linkage.prototype.render = function(key){
     if (select_options.length) {
       me._evt.emit("change", select_options[0].value);
     }
+    if (data.length) {
+      me.status = "ready";
+      me._evt.emit("ready");
+    }
   }
 
   return this;
 };
 
+Linkage.prototype.val = function(){
+  if (arguments.length === 0) {
+    return this.element.val();
+  }
+
+  var me = this;
+  var value = arguments[0];
+
+  if (!me.options.driver || me.status === "ready") {
+    setValue();
+  } else {
+    this.on("ready", setValue);
+  }
+
+  function setValue() {
+    me._evt.off("ready", setValue);
+    me.element.val(value);
+    me._evt.emit("change", value);
+  }
+};
+
 Linkage.prototype.on = function(eventName, handler){
   this._evt.on(eventName, handler);
+  return this;
 };
 Linkage.prototype.off = function(){
   this._evt.off(eventName, handler);
+  return this;
 };
 
 module.exports = Linkage;
