@@ -1,0 +1,35 @@
+{
+  "name": "linkage",
+  "version": "0.1.0",
+  "description": "Linkage",
+  "keywords": [
+    "Linkage",
+    "Cascading",
+    "联动",
+    "级联"
+  ],
+  "homepage": "https://github.com/hotoo/linkage",
+  "author": "hotoo <hotoo.cn@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hotoo/linkage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hotoo/linkage/issues"
+  },
+  "licenses": "MIT",
+  "spm": {
+    "main": "index.js",
+    "dependencies": {
+      "jquery": "2.1.1",
+      "promise": "6.0.0",
+      "evt": "0.2.2"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    },
+    "engines": {
+      "seajs": "2.3.0"
+    }
+  }
+}
