@@ -16,7 +16,24 @@ function isPromise(object){
 
 var DEFAULT_OPTIONS = {
   data: [],
-  driver: null
+
+  // {Linkage}
+  driver: null,
+
+  // default select option.
+  // if not null, add first select option and default is selected.
+  // example:
+  //
+  //   defaultOption: "Please Choose.."
+  //
+  // or:
+  //
+  //   defaultOption: {
+  //     text: "Please Choose..",
+  //     value: "",
+  //     disabled: false
+  //   }
+  defaultOption: null
 };
 
 function Linkage(element, options){
@@ -52,20 +69,36 @@ Linkage.prototype.render = function(key){
   function render(data){
     var select_options = me.element[0].options;
     // Clear original options.
-    for(var i=0,l=select_options.length; i<l; i++){
+    for(var i = select_options.length - 1; i >= 0; i--){
       select_options[i] = null;
     }
     // Set new options.
+    var defaultOption = me.options.defaultOption;
+    if (defaultOption) {
+      select_options[0] = new Option(
+          defaultOption.text || defaultOption.value,
+          defaultOption.value || defaultOption.text,
+          defaultOption.defaultSelected || true,
+          defaultOption.selected || true
+        );
+      if (defaultOption.disabled !== false) {
+        select_options[0].disabled = true;
+      }
+    }
     for (var i=0, d, l=data.length; i<l; i++) {
       d = isObject(data[i]) ? data[i] : {
         text: data[i]
       };
-      select_options[i] = new Option(
+      select_options[defaultOption ? i+1 : i] = new Option(
           d.text || d.value,
           d.value || d.text,
           d.defaultSelected || false,
           d.selected || false
         );
+    }
+
+    if (select_options.length) {
+      me._evt.emit("change", select_options[0].value);
     }
   }
 
