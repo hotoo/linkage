@@ -17,18 +17,24 @@ function isPromise(object){
 function isDefined(object){
   return typeof object !== "undefined";
 }
-function createOption(option, selected){
-  if (!isObject(option)) {
-    option = {
-      text: option
+function createOption(option_data, selected, disabled){
+  if (!isObject(option_data)) {
+    option_data = {
+      text: option_data
     };
   }
-  return new Option(
-    isDefined(option.text) ? option.text : option.value || "",
-    isDefined(option.value) ? option.value : option.text || "",
-    isDefined(option.defaultSelected) ? option.defaultSelected : selected || false,
-    isDefined(option.selected) ? option.selected : selected || false
+  if (isFunction(selected)) {
+    selected = selected(option_data);
+  }
+  var option = new Option(
+    isDefined(option_data.text) ? option_data.text : option_data.value || "",
+    isDefined(option_data.value) ? option_data.value : option_data.text || "",
+    isDefined(option_data.defaultSelected) ? option_data.defaultSelected : selected || false,
+    isDefined(option_data.selected) ? option_data.selected : selected || false
   );
+  option.disabled = isDefined(option_data.disabled) ? option_data.disabled : disabled || false;
+
+  return option;
 }
 
 var DEFAULT_OPTIONS = {
@@ -98,24 +104,16 @@ Linkage.prototype.render = function(key){
     // Set new options.
     var defaultOption = me.options.defaultOption;
     if (defaultOption) {
-      option = select_options[0] = createOption(defaultOption, true);
-      if (defaultOption.disabled !== false) {
-        option.disabled = true;
-      }
-      value = option.value;
+      option = select_options[0] = createOption(defaultOption, true, true);
     }
     for (var i=0, l=data.length; i<l; i++) {
-      option = select_options[defaultOption ? i+1 : i] = createOption(data[i]);
-      // XXX: 考虑合并到 createOption(data, value===data_value)
-      if (option.value === me.element.attr(DATA_VALUE_ATTR)) {
-        option.selected = true;
-        option.defaultSelected = true;
-        value = option.value;
-      }
+      option = select_options[defaultOption ? i+1 : i] = createOption(data[i], function(option){
+        return option.value === me.element.attr(DATA_VALUE_ATTR);
+      });
     }
 
     if (select_options.length) {
-      me._evt.emit("change", value);
+      me._evt.emit("change", me.element.val());
     }
   }
 
