@@ -41,7 +41,8 @@ seajs.use(['./data', 'index', 'jquery'], function(DATA, Linkage, $) {
     driver: province,
     defaultOption: {
       text: "请选择城市",
-      value: ""
+      value: "",
+      disabled: true
     },
     data: getData
   });
@@ -50,7 +51,8 @@ seajs.use(['./data', 'index', 'jquery'], function(DATA, Linkage, $) {
     driver: city,
     defaultOption: {
       text: "请选择县区",
-      value: ""
+      value: "",
+      disabled: false
     },
     data: getData
   });

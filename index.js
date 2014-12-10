@@ -17,18 +17,24 @@ function isPromise(object){
 function isDefined(object){
   return typeof object !== "undefined";
 }
-function createOption(option, selected){
-  if (!isObject(option)) {
-    option = {
-      text: option
+function createOption(option_data, selected, disabled){
+  if (!isObject(option_data)) {
+    option_data = {
+      text: option_data
     };
   }
-  return new Option(
-    isDefined(option.text) ? option.text : option.value || "",
-    isDefined(option.value) ? option.value : option.text || "",
-    isDefined(option.defaultSelected) ? option.defaultSelected : selected || false,
-    isDefined(option.selected) ? option.selected : selected || false
+  if (isFunction(selected)) {
+    selected = selected(option_data);
+  }
+  var option = new Option(
+    isDefined(option_data.text) ? option_data.text : option_data.value || "",
+    isDefined(option_data.value) ? option_data.value : option_data.text || "",
+    isDefined(option_data.defaultSelected) ? option_data.defaultSelected : selected || false,
+    isDefined(option_data.selected) ? option_data.selected : selected || false
   );
+  option.disabled = isDefined(option_data.disabled) ? option_data.disabled : disabled || false;
+
+  return option;
 }
 
 var DEFAULT_OPTIONS = {
@@ -53,35 +59,27 @@ var DEFAULT_OPTIONS = {
   defaultOption: null
 };
 
+var DATA_VALUE_ATTR = "data-value";
+
 function Linkage(element, options){
   var me = this;
   me.element = $(element);
   var options = me.options = $.extend({}, DEFAULT_OPTIONS, options);
   me._evt = new Events(me);
-  me._setStatus("init");
 
   if (options.driver) {
     options.driver.on("change", function(key){
       me.render(key);
-    }).on("loading", function(){
-      me._setStatus("loading");
     });
   }
 
   me.element.on("change", function(){
     me._evt.emit("change", this.value);
-  })
-};
-
-Linkage.prototype._setStatus = function(status){
-  var me = this;
-  me.status = status;
-  me._evt.emit(status);
+  });
 };
 
 Linkage.prototype.render = function(key){
   var me = this;
-  me._setStatus("loading");
   var data_option = this.options.data;
   var data = isFunction(data_option) ? data_option(key) : data_option;
 
@@ -96,6 +94,8 @@ Linkage.prototype.render = function(key){
   }
 
   function render(data){
+    var option;
+    var value;
     var select_options = me.element[0].options;
     // Clear original options.
     for(var i = select_options.length - 1; i >= 0; i--){
@@ -104,20 +104,16 @@ Linkage.prototype.render = function(key){
     // Set new options.
     var defaultOption = me.options.defaultOption;
     if (defaultOption) {
-      select_options[0] = createOption(defaultOption, true);
-      if (defaultOption.disabled !== false) {
-        select_options[0].disabled = true;
-      }
+      option = select_options[0] = createOption(defaultOption, true, true);
     }
     for (var i=0, l=data.length; i<l; i++) {
-      select_options[defaultOption ? i+1 : i] = createOption(data[i]);
+      option = select_options[defaultOption ? i+1 : i] = createOption(data[i], function(option){
+        return option.value === me.element.attr(DATA_VALUE_ATTR);
+      });
     }
 
     if (select_options.length) {
-      me._evt.emit("change", select_options[0].value);
-    }
-    if (data.length) {
-      me._setStatus("ready");
+      me._evt.emit("change", me.element.val());
     }
   }
 
@@ -125,23 +121,25 @@ Linkage.prototype.render = function(key){
 };
 
 Linkage.prototype.val = function(){
+  var me = this;
+
   if (arguments.length === 0) {
-    return this.element.val();
+    return me.element.val();
   }
 
-  var me = this;
   var value = arguments[0];
 
-  if (!me.options.driver || me.status === "ready") {
-    setValue();
-  } else {
-    this.on("ready", setValue);
-  }
+  me.element.attr(DATA_VALUE_ATTR, value);
+  setValue(me.element, value);
 
-  function setValue() {
-    me._evt.off("ready", setValue);
-    me.element.val(value);
-    me._evt.emit("change", value);
+  function setValue(select, value) {
+    select.find(">option").each(function(index, option){
+      if (option.value === value) {
+        option.selected = true;
+        option.defaultSelected = true;
+        me._evt.emit("change", value);
+      }
+    });
   }
 };
 
