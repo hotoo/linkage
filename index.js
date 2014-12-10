@@ -104,11 +104,8 @@ Linkage.prototype.render = function(key){
         select_options[0].disabled = true;
       }
     }
-    for (var i=0, d, l=data.length; i<l; i++) {
-      d = isObject(data[i]) ? data[i] : {
-        text: data[i]
-      };
-      select_options[defaultOption ? i+1 : i] = createOption(d);
+    for (var i=0, l=data.length; i<l; i++) {
+      select_options[defaultOption ? i+1 : i] = createOption(data[i]);
     }
 
     if (select_options.length) {
