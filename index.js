@@ -14,6 +14,23 @@ function isPromise(object){
   return object && isFunction(object.then);
 }
 
+function isDefined(object){
+  return typeof object !== "undefined";
+}
+function createOption(option, selected){
+  if (!isObject(option)) {
+    option = {
+      text: option
+    };
+  }
+  return new Option(
+    isDefined(option.text) ? option.text : option.value || "",
+    isDefined(option.value) ? option.value : option.text || "",
+    isDefined(option.defaultSelected) ? option.defaultSelected : selected || false,
+    isDefined(option.selected) ? option.selected : selected || false
+  );
+}
+
 var DEFAULT_OPTIONS = {
   data: [],
 
@@ -76,23 +93,6 @@ Linkage.prototype.render = function(key){
     });
   } else {
     render(data);
-  }
-
-  function isDefined(object){
-    return typeof object !== "undefined";
-  }
-  function createOption(option, selected){
-    if (!isObject(option)) {
-      option = {
-        text: option
-      };
-    }
-    return new Option(
-      isDefined(option.text) ? option.text : option.value || "",
-      isDefined(option.value) ? option.value : option.text || "",
-      isDefined(option.defaultSelected) ? option.defaultSelected : selected || false,
-      isDefined(option.selected) ? option.selected : selected || false
-    );
   }
 
   function render(data){
