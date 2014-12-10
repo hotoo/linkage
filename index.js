@@ -73,6 +73,23 @@ Linkage.prototype.render = function(key){
     render(data);
   }
 
+  function isDefined(object){
+    return typeof object !== "undefined";
+  }
+  function createOption(option, selected){
+    if (!isObject(option)) {
+      option = {
+        text: option
+      };
+    }
+    return new Option(
+      isDefined(option.text) ? option.text : option.value || "",
+      isDefined(option.value) ? option.value : option.text || "",
+      isDefined(option.defaultSelected) ? option.defaultSelected : selected || false,
+      isDefined(option.selected) ? option.selected : selected || false
+    );
+  }
+
   function render(data){
     var select_options = me.element[0].options;
     // Clear original options.
@@ -82,12 +99,7 @@ Linkage.prototype.render = function(key){
     // Set new options.
     var defaultOption = me.options.defaultOption;
     if (defaultOption) {
-      select_options[0] = new Option(
-          defaultOption.text || defaultOption.value,
-          typeof defaultOption.value !== "undefined" ? defaultOption.value : defaultOption.text,
-          typeof defaultOption.defaultSelected !== "undefined" ? defaultOption.defaultSelected : true,
-          typeof defaultOption.selected !== "undefined" ? defaultOption.selected : true
-        );
+      select_options[0] = createOption(defaultOption, true);
       if (defaultOption.disabled !== false) {
         select_options[0].disabled = true;
       }
@@ -96,13 +108,7 @@ Linkage.prototype.render = function(key){
       d = isObject(data[i]) ? data[i] : {
         text: data[i]
       };
-      // XXX: refact new Option(object)
-      select_options[defaultOption ? i+1 : i] = new Option(
-          d.text || d.value,
-          d.value || d.text,
-          d.defaultSelected || false,
-          d.selected || false
-        );
+      select_options[defaultOption ? i+1 : i] = createOption(d);
     }
 
     if (select_options.length) {
