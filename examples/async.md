@@ -25,6 +25,7 @@ seajs.use(['index', 'jquery', 'promise'], function(Linkage, $, Promise) {
 
       $.ajax({
         url: "./datas/" + pid + ".json?nowrap",
+        dataType: "json",
         success: function(DATA){
           if (!DATA) {
             reject(data);
