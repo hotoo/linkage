@@ -41,13 +41,13 @@ function Linkage(element, options){
   me.element = $(element);
   var options = me.options = $.extend({}, DEFAULT_OPTIONS, options);
   me._evt = new Events(me);
-  me.status = "init";
+  me._setStatus("init");
 
   if (options.driver) {
     options.driver.on("change", function(key){
       me.render(key);
     }).on("loading", function(){
-      me.status = "loading";
+      me._setStatus("loading");
     });
   }
 
@@ -56,10 +56,15 @@ function Linkage(element, options){
   })
 };
 
+Linkage.prototype._setStatus = function(status){
+  var me = this;
+  me.status = status;
+  me._evt.emit(status);
+};
+
 Linkage.prototype.render = function(key){
   var me = this;
-  me.status = "loading";
-  me._evt.emit(me.status);
+  me._setStatus("loading");
   var data_option = this.options.data;
   var data = isFunction(data_option) ? data_option(key) : data_option;
 
@@ -112,8 +117,7 @@ Linkage.prototype.render = function(key){
       me._evt.emit("change", select_options[0].value);
     }
     if (data.length) {
-      me.status = "ready";
-      me._evt.emit("ready");
+      me._setStatus("ready");
     }
   }
 
