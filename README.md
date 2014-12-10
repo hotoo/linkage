@@ -17,42 +17,55 @@ var Linkage = require('linkage');
 var $ = require("jquery");
 var Promise = require('promise');
 
-// 不明确的子级深度（无限级，或不限级）
-var linkage = new Linkage("#level-1", {
-  data: function(parentNodeID){
-    return new Promise(function(resolve, reject){
+function request_data(pid){
+  return new Promise(function(resolve, reject){
 
-      $.ajax({
-        url: "/api/tree.json?pid=" + parentNodeID,
-        success: function(nodes){
-          resolve(nodes);
-        },
-        error: function(err){
-          reject(err);
-        }
-      });
-
+    $.ajax({
+      url: "/api/data.json?pid=" + pid,
+      success: function(nodes){
+        resolve(nodes);
+      },
+      error: function(err){
+        reject(err);
+      }
     });
-  },
-  names: function(){
-    return "level-" + this.level;
-  }
+
+  });
+};
+
+var province = new Linkage("#province", {
+  data: [
+    "北京",
+    { text: "天津", value: "12" }
+  ]
 });
 
-// 明确的子级深度。
-var province = new Linkage("#province", {
-  data: ["北京", "河北"]
-});
 var city = new Linkage("#city", {
-  data: function(key){
-  }
+  data: request_data
 });
-var county = new Linkage("#city", {});
+
+var county = new Linkage("#city", {
+  data: request_data
+});
 ```
 
 ## API
 
-### Linkage Linkage(options)
+### Linkage Linkage(element, options)
+
+* `element`
+  * `{Linkage} driver`: Listener driver change event.
+  * `{HTMLSelectElement}` select element.
+  * `{jQuery}` jQuery select element.
+  * `{String}` select selector.
+* `{Object} options`
+  * `{Array} data`: return `["text", {text: "Label", value: "0"}]`
+  * `{Function} data`: return Array, or Promise.
+  * `{String} defaultOption`, select placeholder.
+  * `{Object} defaultOption`:
+    * `{String} text`: optional.
+    * `{String} value`: optional.
+    * `{Boolean} disabled` optional.
 
 ### linkage.val()
 
