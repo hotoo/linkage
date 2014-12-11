@@ -21,7 +21,7 @@
   "spm": {
     "main": "index.js",
     "dependencies": {
-      "jquery": "2.1.1",
+      "jquery": "1.8.3",
       "promise": "6.0.0",
       "evt": "0.2.2"
     },
