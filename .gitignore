@@ -1,2 +1,4 @@
 spm_modules/
 _site/
+.DS_Store
+dist/
