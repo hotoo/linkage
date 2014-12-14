@@ -112,9 +112,7 @@ Linkage.prototype.render = function(key){
       });
     }
 
-    if (select_options.length) {
-      me._evt.emit("change", me.element.val());
-    }
+    me._evt.emit("change", me.element.val() || "");
   }
 
   return this;
