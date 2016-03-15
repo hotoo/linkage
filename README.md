@@ -7,13 +7,13 @@ Linkage
 ## INSTALL
 
 ```
-$ spm install linkage --save
+$ npm install alinkage --save
 ```
 
 ## USAGE
 
 ```js
-var Linkage = require('linkage');
+var Linkage = require('alinkage');
 var $ = require("jquery");
 var Promise = require('promise');
 

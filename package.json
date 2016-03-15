@@ -1,5 +1,5 @@
 {
-  "name": "linkage",
+  "name": "alinkage",
   "version": "0.1.2",
   "description": "Linkage",
   "keywords": [
@@ -18,18 +18,13 @@
     "url": "https://github.com/hotoo/linkage/issues"
   },
   "licenses": "MIT",
-  "spm": {
-    "main": "index.js",
-    "dependencies": {
-      "jquery": "1.8.3",
-      "promise": "6.0.0",
-      "evt": "0.2.2"
-    },
-    "devDependencies": {
-      "expect.js": "0.3.1"
-    },
-    "engines": {
-      "seajs": "2.3.0"
-    }
+  "main": "index.js",
+  "dependencies": {
+    "jquery": "1.8.3",
+    "promise": "6.0.0",
+    "min-evt": "0.2.2"
+  },
+  "devDependencies": {
+    "expect.js": "0.3.1"
   }
 }

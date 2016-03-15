@@ -1,6 +1,6 @@
 
 var $ = require("jquery");
-var Events = require("evt");
+var Events = require("min-evt");
 
 function typeOf (type){
   return function(object) {
